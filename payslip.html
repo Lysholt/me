@@ -222,6 +222,29 @@
     </div>
   </div>
 
+  <!-- Pension card -->
+  <div class="card" style="grid-column: 1 / -1;">
+    <h2>Pension</h2>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+      <div class="field">
+        <label for="empPension">Lønmodtagerbidrag (%)</label>
+        <input type="number" id="empPension" placeholder="4" min="0" max="100" step="0.5" value="4">
+      </div>
+      <div class="field">
+        <label for="empxPension">Arbejdsgiverbidrag (%)</label>
+        <input type="number" id="empxPension" placeholder="8" min="0" max="100" step="0.5" value="8">
+      </div>
+      <div class="field">
+        <label for="pensionBase">Pensionsgrundlag</label>
+        <select id="pensionBase">
+          <option value="gross">Bruttoløn</option>
+          <option value="net_am">Bruttoløn efter AM-bidrag</option>
+        </select>
+      </div>
+    </div>
+    <p style="font-size:0.8rem; color:#475569; margin-top:4px;">Lønmodtagerbidrag trækkes fra den skattepligtige indkomst. Arbejdsgiverbidrag vises til orientering.</p>
+  </div>
+
   <!-- Tax settings card -->
   <div class="card">
     <h2>Skatteindstillinger</h2>
@@ -316,6 +339,9 @@
     const hours = parseInt(document.getElementById('hours').value);
     const churchTax = document.getElementById('churchTax').checked;
     const extraDeduction = parseFloat(document.getElementById('deduction').value) || 0;
+    const empPensionPct = parseFloat(document.getElementById('empPension').value) / 100 || 0;
+    const empxPensionPct = parseFloat(document.getElementById('empxPension').value) / 100 || 0;
+    const pensionBase = document.getElementById('pensionBase').value;
 
     // Convert to monthly if annual input
     if (period === 'annual') gross = gross / 12;
@@ -334,8 +360,13 @@
     // Income basis after AM-bidrag
     const incomeBasis = gross - amBidrag;
 
-    // Personal allowance + extra deductions
-    const totalDeduction = TAX.personfradragMonthly + extraDeduction;
+    // Pension contributions
+    const pensionCalcBase = pensionBase === 'gross' ? gross : incomeBasis;
+    const empPension = pensionCalcBase * empPensionPct;
+    const empxPension = pensionCalcBase * empxPensionPct;
+
+    // Personal allowance + employee pension + extra deductions
+    const totalDeduction = TAX.personfradragMonthly + empPension + extraDeduction;
 
     // Taxable income for municipal + bottom tax
     const taxableIncome = Math.max(0, incomeBasis - totalDeduction);
@@ -355,13 +386,14 @@
     const topTaxBase = Math.max(0, annualBasis - TAX.topskatThresholdAnnual);
     const topskat = (topTaxBase / 12) * TAX.topskatRate;
 
-    // Total tax
+    // Total tax & deductions
     const totalTax = amBidrag + bundskat + kommuneskat + kirkeskat + topskat + atp;
+    const totalDeductions = totalTax + empPension;
 
-    // Net salary
-    const net = gross - totalTax;
+    // Net salary (take-home after tax and employee pension)
+    const net = gross - totalDeductions;
 
-    // Effective tax rate
+    // Effective tax rate (tax only, not pension)
     const effectiveRate = (totalTax / gross) * 100;
 
     // Render
@@ -381,26 +413,41 @@
       html += row('Topskat', -topskat, 'negative', `${pct(TAX.topskatRate * 100)} over ${(TAX.topskatThresholdAnnual/12).toLocaleString('da-DK')} kr./md.`);
     }
     html += row('ATP (medarbejder)', -atp, 'negative', 'Arbejdsmarkedspension');
+    if (empPension > 0) {
+      html += row('Pension (lønmodtager)', -empPension, 'negative', `${pct(empPensionPct * 100)} af ${pensionBase === 'gross' ? 'bruttoløn' : 'løn efter AM-bidrag'}`);
+    }
+
+    html += `<div class="section-header">Pension (arbejdsgiver)</div>`;
+    if (empxPension > 0) {
+      html += row('Arbejdsgiverbidrag', empxPension, 'neutral', `${pct(empxPensionPct * 100)} — indbetales direkte til pensionsselskab`);
+      html += row('Samlet pensionsopsparing/md.', empPension + empxPension, 'positive', `Heraf ${pct(empPensionPct * 100)} fra dig, ${pct(empxPensionPct * 100)} fra arbejdsgiver`);
+    } else {
+      html += `<div class="slip-row"><span class="label" style="color:#475569;font-size:0.85rem">Intet arbejdsgiverbidrag angivet</span></div>`;
+    }
 
     html += `<div class="section-header">Fradrag anvendt</div>`;
-    html += row('Personfradrag', totalDeduction, 'neutral', `${TAX.personfradragMonthly.toLocaleString('da-DK')} kr. standard${extraDeduction > 0 ? ' + ' + extraDeduction.toLocaleString('da-DK') + ' kr.' : ''}`);
+    html += row('Personfradrag', TAX.personfradragMonthly + extraDeduction, 'neutral', `${TAX.personfradragMonthly.toLocaleString('da-DK')} kr. standard${extraDeduction > 0 ? ' + ' + extraDeduction.toLocaleString('da-DK') + ' kr.' : ''}`);
+    if (empPension > 0) {
+      html += row('Pensionsfradrag (lønmodtager)', empPension, 'neutral', 'Reducerer skattepligtig indkomst');
+    }
 
     html += `<div class="section-header">Opsummering</div>`;
     html += row('Samlet skat & bidrag', -totalTax, 'negative', `Effektiv skatteprocent: ${pct(effectiveRate)}`);
+    if (empPension > 0) {
+      html += row('Pensionsindbetaling (lønmodtager)', -empPension, 'negative', 'Udbetales ved pension');
+    }
 
     html += `
       <div class="slip-row total">
-        <span class="label">Nettoløn pr. måned</span>
+        <span class="label">Nettoløn pr. måned (udbetalt)</span>
         <span class="amount positive">${fmt(net)}</span>
       </div>`;
 
-    if (period === 'annual' || true) {
-      html += `
-        <div class="slip-row" style="opacity:0.6; font-size:0.85rem">
-          <span class="label">Nettoløn pr. år (estimat)</span>
-          <span class="amount neutral">${fmt(net * 12)}</span>
-        </div>`;
-    }
+    html += `
+      <div class="slip-row" style="opacity:0.6; font-size:0.85rem">
+        <span class="label">Nettoløn pr. år (estimat)</span>
+        <span class="amount neutral">${fmt(net * 12)}</span>
+      </div>`;
 
     document.getElementById('slipContent').innerHTML = html;
     document.getElementById('resultCard').classList.add('visible');
