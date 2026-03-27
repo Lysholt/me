@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dansk Lønseddel-beregner</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #f8fafc;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 40px;
+  }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 600px) {
+    .container { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: rgba(30, 32, 44, 0.92);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px;
+  }
+
+  .card h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 6px;
+  }
+
+  input[type="number"],
+  select {
+    width: 100%;
+    background: rgba(15,17,23,0.8);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    color: #f1f5f9;
+    font-size: 1rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="number"]:focus,
+  select:focus {
+    border-color: #6366f1;
+  }
+
+  input[type="number"]::placeholder { color: #475569; }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .checkbox-row input[type="checkbox"] {
+    width: 16px; height: 16px;
+    accent-color: #6366f1;
+    cursor: pointer;
+  }
+
+  .checkbox-row label {
+    margin: 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+  }
+
+  button {
+    width: 100%;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 8px;
+  }
+
+  button:hover { background: #4f46e5; }
+
+  /* Result card */
+  .result-card {
+    grid-column: 1 / -1;
+    background: rgba(30, 32, 44, 0.92);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px;
+    display: none;
+  }
+
+  .result-card.visible { display: block; }
+
+  .result-card h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+
+  .slip-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.95rem;
+  }
+
+  .slip-row:last-child { border-bottom: none; }
+
+  .slip-row .label { color: #94a3b8; }
+  .slip-row .amount { font-variant-numeric: tabular-nums; }
+  .slip-row .amount.positive { color: #34d399; }
+  .slip-row .amount.negative { color: #f87171; }
+  .slip-row .amount.neutral  { color: #e2e8f0; }
+
+  .slip-row.total {
+    margin-top: 8px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .slip-row.total .label { color: #f1f5f9; }
+
+  .section-header {
+    font-size: 0.78rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 14px 0 4px;
+  }
+
+  .tax-rate-note {
+    font-size: 0.78rem;
+    color: #475569;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Dansk Lønseddel-beregner</h1>
+<p class="subtitle">Beregn din nettoløn baseret på 2025-skattesatser</p>
+
+<div class="container">
+
+  <!-- Input card -->
+  <div class="card">
+    <h2>Indkomst</h2>
+
+    <div class="field">
+      <label for="gross">Bruttoløn pr. måned (kr.)</label>
+      <input type="number" id="gross" placeholder="50000" min="0" step="100">
+    </div>
+
+    <div class="field">
+      <label for="period">Beregningsperiode</label>
+      <select id="period">
+        <option value="monthly">Månedlig</option>
+        <option value="annual">Årlig</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="hours">Ugentlig arbejdstid</label>
+      <select id="hours">
+        <option value="37">37 timer (fuld tid)</option>
+        <option value="30">30 timer</option>
+        <option value="20">20 timer</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Tax settings card -->
+  <div class="card">
+    <h2>Skatteindstillinger</h2>
+
+    <div class="field">
+      <label for="municipality">Kommune</label>
+      <select id="municipality" onchange="onMunicipalityChange()">
+        <option value="25.1">Landsgennemsnit (25,1%)</option>
+        <option value="23.4">København (23,4%)</option>
+        <option value="25.0">Aarhus (25,0%)</option>
+        <option value="25.8">Odense (25,8%)</option>
+        <option value="25.5">Aalborg (25,5%)</option>
+        <option value="24.2">Frederiksberg (24,2%)</option>
+        <option value="22.8">Gentofte (22,8%)</option>
+        <option value="25.3">Vejle (25,3%)</option>
+        <option value="custom">Brugerdefineret...</option>
+      </select>
+    </div>
+
+    <div class="field" id="customMuniField" style="display:none">
+      <label for="customMuni">Kommuneskattesats (%)</label>
+      <input type="number" id="customMuni" placeholder="25.0" min="0" max="50" step="0.1">
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="churchTax">
+      <label for="churchTax">Kirkeskat (0,7%)</label>
+    </div>
+
+    <div class="field">
+      <label for="deduction">Ekstra fradrag pr. måned (kr.)</label>
+      <input type="number" id="deduction" placeholder="0" min="0" step="100">
+    </div>
+
+    <button onclick="calculate()">Beregn lønseddel</button>
+  </div>
+
+  <!-- Result card -->
+  <div class="result-card" id="resultCard">
+    <h2>Lønseddel</h2>
+    <div id="slipContent"></div>
+  </div>
+
+</div>
+
+<script>
+  // 2025 Danish tax parameters
+  const TAX = {
+    amBidrag: 0.08,                  // Labour market contribution
+    personfradragMonthly: 4300,      // Personal allowance/month
+    bundskat: 0.1201,                // Bottom-bracket tax
+    topskatRate: 0.15,               // Top tax rate
+    topskatThresholdAnnual: 611500,  // Top tax threshold (annual, after AM-bidrag)
+    atpFull: 99,                     // ATP employee contribution (full-time, /month)
+    atpHalf: 54,                     // ATP at reduced hours
+  };
+
+  function onMunicipalityChange() {
+    const sel = document.getElementById('municipality');
+    document.getElementById('customMuniField').style.display =
+      sel.value === 'custom' ? 'block' : 'none';
+  }
+
+  function getMunicipalRate() {
+    const sel = document.getElementById('municipality');
+    if (sel.value === 'custom') {
+      return parseFloat(document.getElementById('customMuni').value) / 100 || 0;
+    }
+    return parseFloat(sel.value) / 100;
+  }
+
+  function fmt(n) {
+    return n.toLocaleString('da-DK', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' kr.';
+  }
+
+  function pct(n) {
+    return n.toLocaleString('da-DK', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
+  }
+
+  function row(label, amount, type, note) {
+    const noteHtml = note ? `<span class="tax-rate-note">${note}</span>` : '';
+    return `
+      <div class="slip-row">
+        <span class="label">${label}${noteHtml}</span>
+        <span class="amount ${type}">${fmt(amount)}</span>
+      </div>`;
+  }
+
+  function calculate() {
+    let gross = parseFloat(document.getElementById('gross').value) || 0;
+    const period = document.getElementById('period').value;
+    const hours = parseInt(document.getElementById('hours').value);
+    const churchTax = document.getElementById('churchTax').checked;
+    const extraDeduction = parseFloat(document.getElementById('deduction').value) || 0;
+
+    // Convert to monthly if annual input
+    if (period === 'annual') gross = gross / 12;
+
+    if (gross <= 0) {
+      alert('Angiv venligst en bruttoløn.');
+      return;
+    }
+
+    // ATP (labour market supplementary pension)
+    const atp = hours >= 37 ? TAX.atpFull : TAX.atpHalf;
+
+    // AM-bidrag (8%)
+    const amBidrag = gross * TAX.amBidrag;
+
+    // Income basis after AM-bidrag
+    const incomeBasis = gross - amBidrag;
+
+    // Personal allowance + extra deductions
+    const totalDeduction = TAX.personfradragMonthly + extraDeduction;
+
+    // Taxable income for municipal + bottom tax
+    const taxableIncome = Math.max(0, incomeBasis - totalDeduction);
+
+    // Bottom-bracket tax (bundskat)
+    const bundskat = taxableIncome * TAX.bundskat;
+
+    // Municipal tax
+    const muniRate = getMunicipalRate();
+    const kommuneskat = taxableIncome * muniRate;
+
+    // Church tax
+    const kirkeskat = churchTax ? taxableIncome * 0.007 : 0;
+
+    // Top tax — on annual income basis above threshold
+    const annualBasis = incomeBasis * 12;
+    const topTaxBase = Math.max(0, annualBasis - TAX.topskatThresholdAnnual);
+    const topskat = (topTaxBase / 12) * TAX.topskatRate;
+
+    // Total tax
+    const totalTax = amBidrag + bundskat + kommuneskat + kirkeskat + topskat + atp;
+
+    // Net salary
+    const net = gross - totalTax;
+
+    // Effective tax rate
+    const effectiveRate = (totalTax / gross) * 100;
+
+    // Render
+    let html = '';
+
+    html += `<div class="section-header">Indkomst</div>`;
+    html += row('Bruttoløn', gross, 'positive');
+
+    html += `<div class="section-header">Fradrag & bidrag</div>`;
+    html += row('AM-bidrag', -amBidrag, 'negative', `${pct(TAX.amBidrag * 100)} af bruttoløn`);
+    html += row('Bundskat', -bundskat, 'negative', `${pct(TAX.bundskat * 100)} af skattepligtig indkomst`);
+    html += row('Kommuneskat', -kommuneskat, 'negative', `${pct(muniRate * 100)} af skattepligtig indkomst`);
+    if (churchTax) {
+      html += row('Kirkeskat', -kirkeskat, 'negative', '0,7%');
+    }
+    if (topskat > 0) {
+      html += row('Topskat', -topskat, 'negative', `${pct(TAX.topskatRate * 100)} over ${(TAX.topskatThresholdAnnual/12).toLocaleString('da-DK')} kr./md.`);
+    }
+    html += row('ATP (medarbejder)', -atp, 'negative', 'Arbejdsmarkedspension');
+
+    html += `<div class="section-header">Fradrag anvendt</div>`;
+    html += row('Personfradrag', totalDeduction, 'neutral', `${TAX.personfradragMonthly.toLocaleString('da-DK')} kr. standard${extraDeduction > 0 ? ' + ' + extraDeduction.toLocaleString('da-DK') + ' kr.' : ''}`);
+
+    html += `<div class="section-header">Opsummering</div>`;
+    html += row('Samlet skat & bidrag', -totalTax, 'negative', `Effektiv skatteprocent: ${pct(effectiveRate)}`);
+
+    html += `
+      <div class="slip-row total">
+        <span class="label">Nettoløn pr. måned</span>
+        <span class="amount positive">${fmt(net)}</span>
+      </div>`;
+
+    if (period === 'annual' || true) {
+      html += `
+        <div class="slip-row" style="opacity:0.6; font-size:0.85rem">
+          <span class="label">Nettoløn pr. år (estimat)</span>
+          <span class="amount neutral">${fmt(net * 12)}</span>
+        </div>`;
+    }
+
+    document.getElementById('slipContent').innerHTML = html;
+    document.getElementById('resultCard').classList.add('visible');
+    document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // Allow Enter key to trigger calculation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') calculate();
+  });
+</script>
+
+</body>
+</html>
