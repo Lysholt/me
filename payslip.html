@@ -196,43 +196,6 @@
   .transfer-row.net-pay .t-label { color: #f1f5f9; font-weight: 600; font-size: 0.95rem; }
   .transfer-row.net-pay .t-amount { color: #34d399; font-weight: 700; font-size: 1.1rem; }
 
-  .summary-section {
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 20px;
-  }
-
-  .summary-section h3 {
-    font-size: 0.78rem;
-    color: #475569;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 16px;
-  }
-
-  .summary-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0;
-    font-size: 0.84rem;
-  }
-
-  @media (max-width: 600px) {
-    .summary-grid { grid-template-columns: 1fr 1fr; }
-  }
-
-  .summary-col { padding-right: 24px; }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    gap: 12px;
-  }
-
-  .summary-row:last-child { border-bottom: none; }
-  .summary-row .s-label { color: #94a3b8; }
-  .summary-row .s-value { color: #e2e8f0; font-variant-numeric: tabular-nums; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -304,10 +267,6 @@
 
     <div class="transfer-section" id="transferSection"></div>
 
-    <div class="summary-section">
-      <h3>Årsopgørelse (akkumuleret)</h3>
-      <div class="summary-grid" id="summaryGrid"></div>
-    </div>
   </div>
 
 </div>
@@ -350,12 +309,6 @@
     </tr>`;
   }
 
-  function sumRow(label, value) {
-    return `<div class="summary-row">
-      <span class="s-label">${label}</span>
-      <span class="s-value">${fmt(value)}</span>
-    </div>`;
-  }
 
   function calculate() {
     const maaned        = parseFloat(document.getElementById('maanedsloenn').value)   || 0;
@@ -423,27 +376,6 @@
       <span class="t-amount">${fmt(net)}</span>
     </div>`;
     document.getElementById('transferSection').innerHTML = tHtml;
-
-    // Summary
-    const col1 = [
-      ['AM-grundlag', amGrundlag],
-      ['AM-bidrag',   amBidrag],
-      ['A-indkomst',  aIndkomst],
-      ['A-skat',      aSkat],
-      ['ATP eget',    TAX.atpEmployee],
-      ['ATP firma',   TAX.atpFirm],
-      ['Fri tlf.',    TAX.friTelefon],
-    ];
-    const col2 = [
-      ['Pension firma', empxPensionMonth],
-      ['Pension egen',  empPensionTotal],
-    ];
-
-    document.getElementById('summaryGrid').innerHTML = `
-      <div class="summary-col">${col1.map(([l,v]) => sumRow(l,v)).join('')}</div>
-      <div class="summary-col">${col2.map(([l,v]) => sumRow(l,v)).join('')}</div>
-      <div class="summary-col"></div>
-    `;
 
     document.getElementById('resultCard').classList.add('visible');
     document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
