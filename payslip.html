@@ -243,12 +243,22 @@
 <div class="container">
 
   <div class="card">
-    <h2>Lønoplysninger</h2>
-    <div class="grid-3">
+    <h2>Indkomst</h2>
+    <div class="grid-2">
       <div class="field">
-        <label>Bruttoløn (kr./md.)</label>
+        <label>1000 Månedsløn (kr./md.)</label>
         <input type="number" id="maanedsloenn" placeholder="87880" min="0" step="100" autofocus>
       </div>
+      <div class="field">
+        <label>1562 Erhvervskort (kr./md.)</label>
+        <input type="number" id="erhvervskort" placeholder="0" min="0" step="0.01" value="0">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Pension</h2>
+    <div class="grid-2">
       <div class="field">
         <label>6200 Arbejdsgiverbidrag (%)</label>
         <input type="number" id="empxPension" placeholder="9" min="0" max="100" step="0.5" value="9">
@@ -256,6 +266,20 @@
       <div class="field">
         <label>6201/6205 Medarbejderbidrag (%)</label>
         <input type="number" id="empPension" placeholder="7" min="0" max="100" step="0.5" value="7">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Skattekort</h2>
+    <div class="grid-2">
+      <div class="field">
+        <label>Trækprocent (%)</label>
+        <input type="number" id="traekpct" placeholder="42" min="0" max="100" step="0.5" value="42">
+      </div>
+      <div class="field">
+        <label>Månedsfradrag (kr.)</label>
+        <input type="number" id="maanedsfradrag" placeholder="5964" min="0" step="1" value="5964">
       </div>
     </div>
   </div>
@@ -291,18 +315,13 @@
 <script>
   // 2026 Danish tax parameters
   const TAX = {
-    amBidrag:               0.08,
-    personfradrag:          4300,
-    bundskat:               0.1201,
-    topskatRate:            0.15,
-    topskatThresholdAnnual: 611500,
-    atpEmployee:            99,      // 37-timer full rate
-    atpFirm:                198,
-    stBededagRate:          0.0045,
-    friTelefon:             291.67,
-    muniRate:               0.251,   // landsgennemsnit
-    pensionSelskab:         'Danica',
-    normtid:                160.33,
+    amBidrag:     0.08,
+    atpEmployee:  99,      // 37-timer fuld sats
+    atpFirm:      198,
+    stBededagRate: 0.0045,
+    friTelefon:   291.67,
+    pensionSelskab: 'Danica',
+    normtid:      160.33,
   };
 
   function fmt(v) {
@@ -339,55 +358,54 @@
   }
 
   function calculate() {
-    const maaned  = parseFloat(document.getElementById('maanedsloenn').value) || 0;
-    const rateX   = (parseFloat(document.getElementById('empxPension').value) || 0) / 100;
-    const rateEmp = (parseFloat(document.getElementById('empPension').value)  || 0) / 100;
+    const maaned        = parseFloat(document.getElementById('maanedsloenn').value)   || 0;
+    const erh           = parseFloat(document.getElementById('erhvervskort').value)   || 0;
+    const rateX         = (parseFloat(document.getElementById('empxPension').value)   || 0) / 100;
+    const rateEmp       = (parseFloat(document.getElementById('empPension').value)    || 0) / 100;
+    const traekpct      = parseFloat(document.getElementById('traekpct').value)       || 0;
+    const maanedsfradrag = parseFloat(document.getElementById('maanedsfradrag').value) || 0;
 
-    if (maaned <= 0) { alert('Angiv venligst en bruttoløn.'); return; }
+    if (maaned <= 0) { alert('Angiv venligst en månedsløn.'); return; }
 
-    // Pension (grundlag = bruttoløn)
-    const pensionBase      = maaned;
+    // Pension base = løn − erhvervskort
+    const pensionBase      = maaned - erh;
     const empPensionTotal  = pensionBase * rateEmp;
     const empxPensionMonth = pensionBase * rateX;
 
-    // Store Bededag (auto, 0,45 % af løn)
-    const stBededag = maaned * TAX.stBededagRate;
+    // Store Bededag: base = pensionBase × (1 + arbejdsgiverbidrag)
+    const stBededagBase = pensionBase * (1 + rateX);
+    const stBededag     = stBededagBase * TAX.stBededagRate;
 
-    // AM-bidrag
-    const amGrundlag = maaned + TAX.friTelefon;
-    const amBidrag   = amGrundlag * TAX.amBidrag;
+    // AM-grundlag: løn − erhvervskort + fri telefon + bededag − empPension − ATP
+    const amGrundlag = pensionBase + TAX.friTelefon + stBededag - empPensionTotal - TAX.atpEmployee;
+    const amBidrag   = Math.round(amGrundlag * TAX.amBidrag);
 
     // A-indkomst
     const aIndkomst = amGrundlag - amBidrag;
 
-    // A-skat
-    const taxableBase = Math.max(0, aIndkomst - TAX.personfradrag - empPensionTotal);
-    const bundskat    = taxableBase * TAX.bundskat;
-    const kommuneskat = taxableBase * TAX.muniRate;
-    const annualBasis = aIndkomst * 12;
-    const topTaxBase  = Math.max(0, annualBasis - TAX.topskatThresholdAnnual);
-    const topskat     = (topTaxBase / 12) * TAX.topskatRate;
-    const aSkat       = bundskat + kommuneskat + topskat;
-    const traekpct    = aIndkomst > 0 ? (aSkat / aIndkomst) * 100 : 0;
+    // A-skat: trækprocent from skattekort, truncated to whole krone
+    const aSkat = Math.floor(Math.max(0, aIndkomst - maanedsfradrag) * traekpct / 100);
 
     // Net pay
-    const net = maaned + stBededag - amBidrag - aSkat - TAX.atpEmployee - empPensionTotal;
+    const net = maaned - erh + stBededag - amBidrag - aSkat - TAX.atpEmployee - empPensionTotal;
 
     // Period header
     document.getElementById('slipPeriod').textContent = 'Lønseddel';
 
     // Line items
     let html = '';
-    html += line('1000', 'Månedsløn',                         '',           '',             '',                          maaned,            'beloeb-pos');
-    html += line('3050', 'Fri telefon',                       TAX.friTelefon, '',           '',                          '',                '');
-    html += line('6200',     TAX.pensionSelskab,              empxPensionMonth, pensionBase, rateX * 100,   '',              '');
-    html += line('6201/6205', 'Medarbejderbidrag pension',    '',              pensionBase, rateEmp * 100, empPensionTotal, 'beloeb-neg');
-    html += line('7500', 'St. Bededagskomp.',                 stBededag,    amGrundlag,     TAX.stBededagRate * 100,     '',                '');
-    html += line('7523', 'St. Bededagskomp. Udbt. løb.',      '',           '',             '',                          stBededag,         'beloeb-pos');
-    html += line('8100', 'ATP A-sats',                        '',           TAX.normtid,    '',                          TAX.atpEmployee,   'beloeb-neg');
-    html += line('8170', 'ATP firmabidrag',                   TAX.atpFirm,  '',             '',                          '',                '');
-    html += line('8220', 'AM-bidrag af løn',                  '',           amGrundlag,     TAX.amBidrag * 100,          amBidrag,          'beloeb-neg');
-    html += line('8250', 'A-skat af løn',                     '',           aIndkomst,      parseFloat(traekpct.toFixed(2)), aSkat,         'beloeb-neg');
+    html += line('1000', 'Månedsløn',                         '',              '',              '',                          maaned,            'beloeb-pos');
+    if (erh > 0)
+      html += line('1562', 'Erhvervskort',                    '',              '',              '',                          erh,               'beloeb-neg');
+    html += line('3050', 'Fri telefon',                       TAX.friTelefon,  '',              '',                          '',                '');
+    html += line('6200',      TAX.pensionSelskab,             empxPensionMonth, pensionBase,    rateX * 100,                 '',                '');
+    html += line('6201/6205', 'Medarbejderbidrag pension',    '',              pensionBase,     rateEmp * 100,               empPensionTotal,   'beloeb-neg');
+    html += line('7500', 'St. Bededagskomp.',                 stBededag,       stBededagBase,   TAX.stBededagRate * 100,     '',                '');
+    html += line('7523', 'St. Bededagskomp. Udbt. løb.',      '',              '',              '',                          stBededag,         'beloeb-pos');
+    html += line('8100', 'ATP A-sats',                        '',              TAX.normtid,     '',                          TAX.atpEmployee,   'beloeb-neg');
+    html += line('8170', 'ATP firmabidrag',                   TAX.atpFirm,     '',              '',                          '',                '');
+    html += line('8220', 'AM-bidrag af løn',                  '',              amGrundlag,      TAX.amBidrag * 100,          amBidrag,          'beloeb-neg');
+    html += line('8250', 'A-skat af løn',                     aIndkomst,       maanedsfradrag,  traekpct,                    aSkat,             'beloeb-neg');
 
     document.getElementById('slipLines').innerHTML = html;
 
