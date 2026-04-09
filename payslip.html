@@ -54,16 +54,10 @@
     margin-bottom: 20px;
   }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
-  .grid-5 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 16px; }
 
-  @media (max-width: 700px) {
-    .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 460px) {
-    .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; }
+  @media (max-width: 600px) {
+    .grid-3 { grid-template-columns: 1fr; }
   }
 
   .field { margin-bottom: 0; }
@@ -75,9 +69,7 @@
     margin-bottom: 5px;
   }
 
-  input[type="number"],
-  input[type="text"],
-  select {
+  input[type="number"] {
     width: 100%;
     background: rgba(15,17,23,0.8);
     border: 1px solid rgba(255,255,255,0.12);
@@ -89,34 +81,8 @@
     transition: border-color 0.2s;
   }
 
-  input:focus, select:focus { border-color: #6366f1; }
+  input:focus { border-color: #6366f1; }
   input::placeholder { color: #475569; }
-
-  .checkbox-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .checkbox-row input[type="checkbox"] {
-    width: 16px; height: 16px;
-    accent-color: #6366f1;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  .checkbox-row label {
-    margin: 0;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #cbd5e1;
-  }
-
-  .hint {
-    font-size: 0.75rem;
-    color: #475569;
-    font-weight: 400;
-  }
 
   button {
     background: #6366f1;
@@ -153,7 +119,6 @@
     border-bottom: 1px solid rgba(255,255,255,0.1);
   }
 
-  /* Line-item table */
   .slip-table {
     width: 100%;
     border-collapse: collapse;
@@ -203,7 +168,6 @@
   .slip-table td.beloeb-neg { color: #f87171; }
   .slip-table td.beloeb-neu { color: #e2e8f0; }
 
-  /* Transfer rows */
   .transfer-section {
     border-top: 1px solid rgba(255,255,255,0.1);
     padding-top: 16px;
@@ -232,7 +196,6 @@
   .transfer-row.net-pay .t-label { color: #f1f5f9; font-weight: 600; font-size: 0.95rem; }
   .transfer-row.net-pay .t-amount { color: #34d399; font-weight: 700; font-size: 1.1rem; }
 
-  /* Summary table */
   .summary-section {
     border-top: 1px solid rgba(255,255,255,0.1);
     padding-top: 20px;
@@ -279,67 +242,12 @@
 
 <div class="container">
 
-  <!-- ── Periode & betaling ── -->
   <div class="card">
-    <h2>Periode &amp; betalingsoplysninger</h2>
-    <div class="grid-5">
+    <h2>Lønoplysninger</h2>
+    <div class="grid-3">
       <div class="field">
-        <label>Periode start</label>
-        <input type="text" id="periodeStart" placeholder="1. februar 2026">
-      </div>
-      <div class="field">
-        <label>Periode slut</label>
-        <input type="text" id="periodeSlut" placeholder="28. februar 2026">
-      </div>
-      <div class="field">
-        <label>Dispositionsdato</label>
-        <input type="text" id="dispDato" placeholder="27-02-2026">
-      </div>
-      <div class="field">
-        <label>Reg. nr.</label>
-        <input type="text" id="regNr" placeholder="5501">
-      </div>
-      <div class="field">
-        <label>Konto nr.</label>
-        <input type="text" id="kontoNr" placeholder="6873703464">
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Indkomst ── -->
-  <div class="card">
-    <h2>Indkomst</h2>
-    <div class="grid-3" style="gap:16px;">
-      <div class="field">
-        <label>1000 Månedsløn (kr.)</label>
-        <input type="number" id="maanedsloenn" placeholder="87880" min="0" step="100">
-      </div>
-      <div class="field">
-        <label>1531 Bonus (kr.)</label>
-        <input type="number" id="bonus" placeholder="0" min="0" step="100">
-      </div>
-      <div class="field">
-        <label>1562 Erhvervskort / tilbagebetaling (kr.) <span class="hint">fratrækkes</span></label>
-        <input type="number" id="erhvervskort" placeholder="0" min="0" step="1">
-      </div>
-      <div class="field">
-        <label>1594 Sygdom med løn (dage)</label>
-        <input type="number" id="sygdomDage" placeholder="0" min="0" step="0.5">
-      </div>
-      <div class="field">
-        <label>3050 Fri telefon (kr./md.) <span class="hint">skattepligtig fordel</span></label>
-        <input type="number" id="friTelefon" placeholder="291.67" min="0" step="0.01" value="291.67">
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Pension ── -->
-  <div class="card">
-    <h2>Pension</h2>
-    <div class="grid-3" style="gap:16px;">
-      <div class="field">
-        <label>Pensionsselskab</label>
-        <input type="text" id="pensionSelskab" placeholder="Danica" value="Danica">
+        <label>Bruttoløn (kr./md.)</label>
+        <input type="number" id="maanedsloenn" placeholder="87880" min="0" step="100" autofocus>
       </div>
       <div class="field">
         <label>6201 Lønmodtagerbidrag 1 (%)</label>
@@ -349,111 +257,11 @@
         <label>6205 Lønmodtagerbidrag 2 (%)</label>
         <input type="number" id="empPension2" placeholder="2.5" min="0" max="100" step="0.5" value="2.5">
       </div>
-      <div class="field">
-        <label>6200 Arbejdsgiverbidrag (%)</label>
-        <input type="number" id="empxPension" placeholder="9" min="0" max="100" step="0.5" value="9">
-      </div>
-      <div class="field">
-        <label>Pensionsgrundlag</label>
-        <select id="pensionBase">
-          <option value="salary_minus_erh">Månedsløn − Erhvervskort</option>
-          <option value="gross">Månedsløn (bruttoløn)</option>
-          <option value="net_am">Løn efter AM-bidrag</option>
-        </select>
-      </div>
-    </div>
-    <p style="font-size:0.78rem;color:#475569;margin-top:12px;">Lønmodtagerbidrag fratrækkes den skattepligtige indkomst. Arbejdsgiverbidrag indbetales direkte af arbejdsgiver.</p>
-  </div>
-
-  <!-- ── Store Bededag + ATP + Skat ── -->
-  <div class="card">
-    <h2>Store Bededag, ATP &amp; Skat</h2>
-    <div class="grid-3" style="gap:16px; align-items:start;">
-
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="checkbox-row">
-          <input type="checkbox" id="stBededagCheck" onchange="toggleStBededag()" checked>
-          <label for="stBededagCheck">7500/7523 St. Bededagskomp.</label>
-        </div>
-        <div class="field" id="stBededagField">
-          <label>Kompensation (kr.) <span class="hint">tom = beregn automatisk</span></label>
-          <input type="number" id="stBededag" placeholder="auto (0,45% af løn)" min="0" step="0.01">
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="field">
-          <label>8100 Ugentlig arbejdstid <span class="hint">ATP-sats</span></label>
-          <select id="hours">
-            <option value="37">37 timer — 99 kr./md. (fuld ATP)</option>
-            <option value="30">30 timer — 66 kr./md.</option>
-            <option value="20">20 timer — 54 kr./md.</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Normtid (timer pr. md.)</label>
-          <input type="number" id="normtid" placeholder="160.33" min="0" step="0.01" value="160.33">
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        <div class="field">
-          <label>Kommune (kommuneskattesats)</label>
-          <select id="municipality" onchange="onMunicipalityChange()">
-            <option value="25.1">Landsgennemsnit (25,1 %)</option>
-            <option value="23.4">København (23,4 %)</option>
-            <option value="25.0">Aarhus (25,0 %)</option>
-            <option value="25.8">Odense (25,8 %)</option>
-            <option value="25.5">Aalborg (25,5 %)</option>
-            <option value="24.2">Frederiksberg (24,2 %)</option>
-            <option value="22.8">Gentofte (22,8 %)</option>
-            <option value="25.3">Vejle (25,3 %)</option>
-            <option value="custom">Brugerdefineret…</option>
-          </select>
-        </div>
-        <div class="field" id="customMuniField" style="display:none">
-          <label>Brugerdefineret kommuneskattesats (%)</label>
-          <input type="number" id="customMuni" placeholder="25.0" min="0" max="50" step="0.1">
-        </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="churchTax">
-          <label for="churchTax">Kirkeskat (0,7 %)</label>
-        </div>
-        <div class="field">
-          <label>Personfradrag pr. måned (kr.)</label>
-          <input type="number" id="personfradrag" value="4300" min="0" step="50">
-        </div>
-      </div>
     </div>
   </div>
 
-  <!-- ── År til dato ── -->
-  <div class="card">
-    <h2>År til dato <span class="hint" style="text-transform:none;letter-spacing:0;">(valgfrit — bruges i oversigtstabellen)</span></h2>
-    <div class="grid-4" style="gap:16px;">
-      <div class="field">
-        <label>Ferieberet. løn (kr. YTD)</label>
-        <input type="number" id="ytdFerieberet" placeholder="0" min="0" step="0.01">
-      </div>
-      <div class="field">
-        <label>Ferietillæg (kr. YTD)</label>
-        <input type="number" id="ytdFerietillaeg" placeholder="0" min="0" step="0.01">
-      </div>
-      <div class="field">
-        <label>Timer år/dato</label>
-        <input type="number" id="ytdTimer" placeholder="0" min="0" step="0.01">
-      </div>
-      <div class="field">
-        <label>Indv. ferieår DG</label>
-        <input type="number" id="ytdIndvFerie" placeholder="0" min="0" step="0.01">
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Beregn ── -->
   <button onclick="calculate()">Beregn lønseddel</button>
 
-  <!-- ── Result ── -->
   <div class="result-card" id="resultCard">
     <div class="slip-period" id="slipPeriod"></div>
 
@@ -484,38 +292,19 @@
   // 2026 Danish tax parameters
   const TAX = {
     amBidrag:               0.08,
-    personfradragDefault:   4300,
+    personfradrag:          4300,
     bundskat:               0.1201,
     topskatRate:            0.15,
     topskatThresholdAnnual: 611500,
-    atpRates: { 37: 99, 30: 66, 20: 54 },
+    atpEmployee:            99,      // 37-timer full rate
     atpFirm:                198,
     stBededagRate:          0.0045,
-    friTelefonStandard:     291.67,
+    friTelefon:             291.67,
+    muniRate:               0.251,   // landsgennemsnit
+    empxPensionRate:        0.09,    // arbejdsgiverbidrag
+    pensionSelskab:         'Danica',
+    normtid:                160.33,
   };
-
-  function onMunicipalityChange() {
-    const sel = document.getElementById('municipality');
-    document.getElementById('customMuniField').style.display =
-      sel.value === 'custom' ? 'block' : 'none';
-  }
-
-  function toggleStBededag() {
-    const on = document.getElementById('stBededagCheck').checked;
-    document.getElementById('stBededagField').style.display = on ? 'block' : 'none';
-  }
-
-  function getMunicipalRate() {
-    const sel = document.getElementById('municipality');
-    if (sel.value === 'custom') {
-      return parseFloat(document.getElementById('customMuni').value) / 100 || 0;
-    }
-    return parseFloat(sel.value) / 100;
-  }
-
-  function n(id) { return parseFloat(document.getElementById(id).value) || 0; }
-  function s(id) { return document.getElementById(id).value.trim(); }
-  function checked(id) { return document.getElementById(id).checked; }
 
   function fmt(v) {
     if (v === null || v === undefined || v === '') return '';
@@ -528,13 +317,13 @@
   }
 
   function line(kode, spec, grundlag, enheder, sats, beloeb, beloebClass) {
-    const gTd  = grundlag  !== '' ? `<td>${fmt(grundlag)}</td>`  : '<td></td>';
-    const eTd  = enheder   !== '' ? `<td>${fmt(enheder)}</td>`   : '<td></td>';
-    const sTd  = sats      !== '' ? `<td>${fmtSats(sats)}</td>`  : '<td></td>';
+    const gTd = grundlag !== '' ? `<td>${fmt(grundlag)}</td>`  : '<td></td>';
+    const eTd = enheder  !== '' ? `<td>${fmt(enheder)}</td>`   : '<td></td>';
+    const sTd = sats     !== '' ? `<td>${fmtSats(sats)}</td>`  : '<td></td>';
     let bTd = '<td></td>';
     if (beloeb !== '') {
-      const cls = beloebClass || 'beloeb-neu';
-      const sign = (beloebClass === 'beloeb-neg') ? '−' : '';
+      const cls  = beloebClass || 'beloeb-neu';
+      const sign = beloebClass === 'beloeb-neg' ? '−' : '';
       bTd = `<td class="${cls}">${sign}${fmt(beloeb)}</td>`;
     }
     return `<tr>
@@ -551,183 +340,96 @@
   }
 
   function calculate() {
-    const maaned   = n('maanedsloenn');
-    const bonus    = n('bonus');
-    const erh      = n('erhvervskort');
-    const sygDage  = n('sygdomDage');
-    const friTlf   = n('friTelefon');
-    const normtid  = n('normtid') || 160.33;
+    const maaned = parseFloat(document.getElementById('maanedsloenn').value) || 0;
+    const rate1  = (parseFloat(document.getElementById('empPension1').value) || 0) / 100;
+    const rate2  = (parseFloat(document.getElementById('empPension2').value) || 0) / 100;
 
-    const selskab  = s('pensionSelskab') || 'Pension';
-    const rate1    = n('empPension1') / 100;
-    const rate2    = n('empPension2') / 100;
-    const rateX    = n('empxPension') / 100;
-    const penBase  = s('pensionBase');
+    if (maaned <= 0) { alert('Angiv venligst en bruttoløn.'); return; }
 
-    const stEnabled = checked('stBededagCheck');
-    const stManual  = n('stBededag');
-
-    const hours    = parseInt(document.getElementById('hours').value);
-    const muniRate = getMunicipalRate();
-    const kirke    = checked('churchTax') ? 0.007 : 0;
-    const pFradrag = n('personfradrag') || TAX.personfradragDefault;
-
-    const periodeStart = s('periodeStart');
-    const periodeSlut  = s('periodeSlut');
-    const dispDato     = s('dispDato');
-    const regNr        = s('regNr');
-    const kontoNr      = s('kontoNr');
-
-    const ytdFerieberet   = n('ytdFerieberet');
-    const ytdFerietillaeg = n('ytdFerietillaeg');
-    const ytdTimer        = n('ytdTimer');
-    const ytdIndvFerie    = n('ytdIndvFerie');
-
-    if (maaned <= 0) { alert('Angiv venligst en månedsløn.'); return; }
-
-    // ── Pension base ──
-    let pensionBase;
-    if (penBase === 'salary_minus_erh') pensionBase = maaned - erh;
-    else if (penBase === 'gross')       pensionBase = maaned;
-    else                                pensionBase = (maaned - erh) * (1 - TAX.amBidrag); // net_am
-
+    // Pension (grundlag = bruttoløn)
+    const pensionBase      = maaned;
     const empPension1Month = pensionBase * rate1;
     const empPension2Month = pensionBase * rate2;
     const empPensionTotal  = empPension1Month + empPension2Month;
-    const empxPensionMonth = pensionBase * rateX;
+    const empxPensionMonth = pensionBase * TAX.empxPensionRate;
 
-    // ── St. Bededag ──
-    const stBededag = stEnabled
-      ? (stManual > 0 ? stManual : maaned * TAX.stBededagRate)
-      : 0;
+    // Store Bededag (auto, 0,45 % af løn)
+    const stBededag = maaned * TAX.stBededagRate;
 
-    // ── AM-bidrag ──
-    // AM-grundlag includes salary, bonus, fri telefon benefit, and bededag payout, minus erhvervskort
-    const amGrundlag = maaned + bonus + friTlf - erh;
+    // AM-bidrag
+    const amGrundlag = maaned + TAX.friTelefon;
     const amBidrag   = amGrundlag * TAX.amBidrag;
 
-    // ── A-indkomst ──
+    // A-indkomst
     const aIndkomst = amGrundlag - amBidrag;
 
-    // ── ATP ──
-    const atpEmployee = TAX.atpRates[hours] ?? TAX.atpRates[37];
-    const atpFirm     = TAX.atpFirm;
-
-    // ── A-skat (trækprocent: bundskat + kommuneskat + kirkeskat + evt. topskat) ──
-    const taxableBase = Math.max(0, aIndkomst - pFradrag - empPensionTotal);
+    // A-skat
+    const taxableBase = Math.max(0, aIndkomst - TAX.personfradrag - empPensionTotal);
     const bundskat    = taxableBase * TAX.bundskat;
-    const kommuneskat = taxableBase * muniRate;
-    const kirkeskat   = taxableBase * kirke;
-
-    const annualBasis   = aIndkomst * 12;
-    const topTaxBase    = Math.max(0, annualBasis - TAX.topskatThresholdAnnual);
-    const topskat       = (topTaxBase / 12) * TAX.topskatRate;
-
-    const aSkat       = bundskat + kommuneskat + kirkeskat + topskat;
+    const kommuneskat = taxableBase * TAX.muniRate;
+    const annualBasis = aIndkomst * 12;
+    const topTaxBase  = Math.max(0, annualBasis - TAX.topskatThresholdAnnual);
+    const topskat     = (topTaxBase / 12) * TAX.topskatRate;
+    const aSkat       = bundskat + kommuneskat + topskat;
     const traekpct    = aIndkomst > 0 ? (aSkat / aIndkomst) * 100 : 0;
 
-    // ── Net pay ──
-    const net = maaned + bonus - erh + stBededag - amBidrag - aSkat - atpEmployee - empPensionTotal;
+    // Net pay
+    const net = maaned + stBededag - amBidrag - aSkat - TAX.atpEmployee - empPensionTotal;
 
-    // ── Render period header ──
-    const periodTxt = (periodeStart && periodeSlut)
-      ? `Lønseddel for perioden ${periodeStart} – ${periodeSlut}`
-      : 'Lønseddel';
-    document.getElementById('slipPeriod').textContent = periodTxt;
+    // Period header
+    document.getElementById('slipPeriod').textContent = 'Lønseddel';
 
-    // ── Render line items ──
+    // Line items
     let html = '';
-
-    html += line('1000', 'Månedsløn', '', '', '', maaned, 'beloeb-pos');
-
-    if (bonus > 0)
-      html += line('1531', 'Bonus', '', '', '', bonus, 'beloeb-pos');
-
-    if (erh > 0)
-      html += line('1562', 'Erhvervskort', '', '', '', erh, 'beloeb-neg');
-
-    if (sygDage > 0)
-      html += line('1594', 'Sygdom med løn', sygDage, '', '', '', '');
-
-    if (friTlf > 0)
-      html += line('3050', 'Fri telefon', friTlf, '', '', '', '');
-
-    if (rateX > 0)
-      html += line('6200', selskab, empxPensionMonth, pensionBase, rateX * 100, '', '');
-
-    if (rate1 > 0)
-      html += line('6201', `${selskab} eget bidrag %`, '', pensionBase, rate1 * 100, empPension1Month, 'beloeb-neg');
-
+    html += line('1000', 'Månedsløn',                         '',           '',             '',                          maaned,            'beloeb-pos');
+    html += line('3050', 'Fri telefon',                       TAX.friTelefon, '',           '',                          '',                '');
+    html += line('6200', TAX.pensionSelskab,                  empxPensionMonth, pensionBase, TAX.empxPensionRate * 100,  '',                '');
+    html += line('6201', `${TAX.pensionSelskab} eget bidrag %`, '',         pensionBase,    rate1 * 100,                 empPension1Month,  'beloeb-neg');
     if (rate2 > 0)
-      html += line('6205', 'Pension egen %', '', pensionBase, rate2 * 100, empPension2Month, 'beloeb-neg');
-
-    if (stBededag > 0) {
-      html += line('7500', 'St. Bededagskomp.', stBededag, amGrundlag, TAX.stBededagRate * 100, '', '');
-      html += line('7523', 'St. Bededagskomp. Udbt. løb.', '', '', '', stBededag, 'beloeb-pos');
-    }
-
-    html += line('8100', 'ATP A-sats', '', normtid, '', atpEmployee, 'beloeb-neg');
-
-    html += line('8170', 'ATP firmabidrag', atpFirm, '', '', '', '');
-
-    html += line('8220', 'AM-bidrag af løn', '', amGrundlag, TAX.amBidrag * 100, amBidrag, 'beloeb-neg');
-
-    html += line('8250', 'A-skat af løn', '', aIndkomst, parseFloat(traekpct.toFixed(2)), aSkat, 'beloeb-neg');
+      html += line('6205', 'Pension egen %',                  '',           pensionBase,    rate2 * 100,                 empPension2Month,  'beloeb-neg');
+    html += line('7500', 'St. Bededagskomp.',                 stBededag,    amGrundlag,     TAX.stBededagRate * 100,     '',                '');
+    html += line('7523', 'St. Bededagskomp. Udbt. løb.',      '',           '',             '',                          stBededag,         'beloeb-pos');
+    html += line('8100', 'ATP A-sats',                        '',           TAX.normtid,    '',                          TAX.atpEmployee,   'beloeb-neg');
+    html += line('8170', 'ATP firmabidrag',                   TAX.atpFirm,  '',             '',                          '',                '');
+    html += line('8220', 'AM-bidrag af løn',                  '',           amGrundlag,     TAX.amBidrag * 100,          amBidrag,          'beloeb-neg');
+    html += line('8250', 'A-skat af løn',                     '',           aIndkomst,      parseFloat(traekpct.toFixed(2)), aSkat,         'beloeb-neg');
 
     document.getElementById('slipLines').innerHTML = html;
 
-    // ── Transfer section ──
+    // Transfer section
     const pensionTotal = empxPensionMonth + empPensionTotal;
     let tHtml = '';
-
     if (pensionTotal > 0) {
       tHtml += `<div class="transfer-row">
-        <span class="t-label">Overført til ${selskab}</span>
+        <span class="t-label">Overført til ${TAX.pensionSelskab}</span>
         <span class="t-amount">${fmt(pensionTotal)}</span>
       </div>`;
     }
-
-    const bankLabel = (regNr && kontoNr)
-      ? `Overført til reg./konto ${regNr} ${kontoNr}${dispDato ? ' &nbsp;·&nbsp; disp. dato ' + dispDato : ''}`
-      : 'Overført til konto';
     tHtml += `<div class="transfer-row net-pay">
-      <span class="t-label">${bankLabel}</span>
+      <span class="t-label">Udbetalt til konto</span>
       <span class="t-amount">${fmt(net)}</span>
     </div>`;
-
     document.getElementById('transferSection').innerHTML = tHtml;
 
-    // ── Summary table (YTD = current month, plus manual YTD fields) ──
+    // Summary
     const col1 = [
-      ['AM-grundlag',  amGrundlag],
-      ['AM-bidrag',    amBidrag],
-      ['A-indkomst',   aIndkomst],
-      ['A-skat',       aSkat],
-      ['ATP eget',     atpEmployee],
-      ['ATP firma',    atpFirm],
-      ['Fri tlf.',     friTlf > 0 ? friTlf : null],
-    ].filter(r => r[1] !== null && r[1] !== undefined);
-
+      ['AM-grundlag', amGrundlag],
+      ['AM-bidrag',   amBidrag],
+      ['A-indkomst',  aIndkomst],
+      ['A-skat',      aSkat],
+      ['ATP eget',    TAX.atpEmployee],
+      ['ATP firma',   TAX.atpFirm],
+      ['Fri tlf.',    TAX.friTelefon],
+    ];
     const col2 = [
-      ['Pension firma', empxPensionMonth > 0 ? empxPensionMonth : null],
-      ['Pension egen',  empPensionTotal  > 0 ? empPensionTotal  : null],
-    ].filter(r => r[1] !== null);
-
-    const col3 = [
-      ['Indv. ferieår DG', ytdIndvFerie    > 0 ? ytdIndvFerie    : null],
-      ['Ferieberet. løn',  ytdFerieberet   > 0 ? ytdFerieberet   : null],
-      ['Ferietillæg',      ytdFerietillaeg > 0 ? ytdFerietillaeg : null],
-      ['Timer år/dato',    ytdTimer        > 0 ? ytdTimer        : null],
-    ].filter(r => r[1] !== null);
-
-    function buildCol(rows) {
-      return rows.map(([l, v]) => sumRow(l, v)).join('');
-    }
+      ['Pension firma', empxPensionMonth],
+      ['Pension egen',  empPensionTotal],
+    ];
 
     document.getElementById('summaryGrid').innerHTML = `
-      <div class="summary-col">${buildCol(col1)}</div>
-      <div class="summary-col">${buildCol(col2)}</div>
-      <div class="summary-col">${buildCol(col3)}</div>
+      <div class="summary-col">${col1.map(([l,v]) => sumRow(l,v)).join('')}</div>
+      <div class="summary-col">${col2.map(([l,v]) => sumRow(l,v)).join('')}</div>
+      <div class="summary-col"></div>
     `;
 
     document.getElementById('resultCard').classList.add('visible');
