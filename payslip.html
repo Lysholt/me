@@ -54,10 +54,10 @@
     margin-bottom: 20px;
   }
 
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 
   @media (max-width: 600px) {
-    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
   }
 
   .field { margin-bottom: 0; }
@@ -244,7 +244,7 @@
 
   <div class="card">
     <h2>Lønoplysninger</h2>
-    <div class="grid-2">
+    <div class="grid-3">
       <div class="field">
         <label>Bruttoløn (kr./md.)</label>
         <input type="number" id="maanedsloenn" placeholder="87880" min="0" step="100" autofocus>
@@ -252,6 +252,10 @@
       <div class="field">
         <label>6200 Arbejdsgiverbidrag (%)</label>
         <input type="number" id="empxPension" placeholder="9" min="0" max="100" step="0.5" value="9">
+      </div>
+      <div class="field">
+        <label>6201/6205 Medarbejderbidrag (%)</label>
+        <input type="number" id="empPension" placeholder="7" min="0" max="100" step="0.5" value="7">
       </div>
     </div>
   </div>
@@ -297,8 +301,6 @@
     stBededagRate:          0.0045,
     friTelefon:             291.67,
     muniRate:               0.251,   // landsgennemsnit
-    empPension1Rate:        0.045,   // 6201 lønmodtagerbidrag 1
-    empPension2Rate:        0.025,   // 6205 lønmodtagerbidrag 2
     pensionSelskab:         'Danica',
     normtid:                160.33,
   };
@@ -337,16 +339,15 @@
   }
 
   function calculate() {
-    const maaned   = parseFloat(document.getElementById('maanedsloenn').value) || 0;
-    const rateX    = (parseFloat(document.getElementById('empxPension').value) || 0) / 100;
+    const maaned  = parseFloat(document.getElementById('maanedsloenn').value) || 0;
+    const rateX   = (parseFloat(document.getElementById('empxPension').value) || 0) / 100;
+    const rateEmp = (parseFloat(document.getElementById('empPension').value)  || 0) / 100;
 
     if (maaned <= 0) { alert('Angiv venligst en bruttoløn.'); return; }
 
     // Pension (grundlag = bruttoløn)
     const pensionBase      = maaned;
-    const empPension1Month = pensionBase * TAX.empPension1Rate;
-    const empPension2Month = pensionBase * TAX.empPension2Rate;
-    const empPensionTotal  = empPension1Month + empPension2Month;
+    const empPensionTotal  = pensionBase * rateEmp;
     const empxPensionMonth = pensionBase * rateX;
 
     // Store Bededag (auto, 0,45 % af løn)
@@ -379,9 +380,8 @@
     let html = '';
     html += line('1000', 'Månedsløn',                         '',           '',             '',                          maaned,            'beloeb-pos');
     html += line('3050', 'Fri telefon',                       TAX.friTelefon, '',           '',                          '',                '');
-    html += line('6200', TAX.pensionSelskab,                    empxPensionMonth, pensionBase, rateX * 100,                '',                '');
-    html += line('6201', `${TAX.pensionSelskab} eget bidrag %`, '',           pensionBase, TAX.empPension1Rate * 100,    empPension1Month,  'beloeb-neg');
-    html += line('6205', 'Pension egen %',                      '',           pensionBase, TAX.empPension2Rate * 100,    empPension2Month,  'beloeb-neg');
+    html += line('6200',     TAX.pensionSelskab,              empxPensionMonth, pensionBase, rateX * 100,   '',              '');
+    html += line('6201/6205', 'Medarbejderbidrag pension',    '',              pensionBase, rateEmp * 100, empPensionTotal, 'beloeb-neg');
     html += line('7500', 'St. Bededagskomp.',                 stBededag,    amGrundlag,     TAX.stBededagRate * 100,     '',                '');
     html += line('7523', 'St. Bededagskomp. Udbt. løb.',      '',           '',             '',                          stBededag,         'beloeb-pos');
     html += line('8100', 'ATP A-sats',                        '',           TAX.normtid,    '',                          TAX.atpEmployee,   'beloeb-neg');
