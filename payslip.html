@@ -250,12 +250,12 @@
         <input type="number" id="maanedsloenn" placeholder="87880" min="0" step="100" autofocus>
       </div>
       <div class="field">
-        <label>6201 Lønmodtagerbidrag 1 (%)</label>
-        <input type="number" id="empPension1" placeholder="4.5" min="0" max="100" step="0.5" value="4.5">
+        <label>6200 Arbejdsgiverbidrag (%)</label>
+        <input type="number" id="empxPension" placeholder="9" min="0" max="100" step="0.5" value="9">
       </div>
       <div class="field">
-        <label>6205 Lønmodtagerbidrag 2 (%)</label>
-        <input type="number" id="empPension2" placeholder="2.5" min="0" max="100" step="0.5" value="2.5">
+        <label>6201/6205 Medarbejderbidrag (%)</label>
+        <input type="number" id="empPension" placeholder="7" min="0" max="100" step="0.5" value="7">
       </div>
     </div>
   </div>
@@ -301,7 +301,6 @@
     stBededagRate:          0.0045,
     friTelefon:             291.67,
     muniRate:               0.251,   // landsgennemsnit
-    empxPensionRate:        0.09,    // arbejdsgiverbidrag
     pensionSelskab:         'Danica',
     normtid:                160.33,
   };
@@ -340,18 +339,16 @@
   }
 
   function calculate() {
-    const maaned = parseFloat(document.getElementById('maanedsloenn').value) || 0;
-    const rate1  = (parseFloat(document.getElementById('empPension1').value) || 0) / 100;
-    const rate2  = (parseFloat(document.getElementById('empPension2').value) || 0) / 100;
+    const maaned  = parseFloat(document.getElementById('maanedsloenn').value) || 0;
+    const rateX   = (parseFloat(document.getElementById('empxPension').value) || 0) / 100;
+    const rateEmp = (parseFloat(document.getElementById('empPension').value)  || 0) / 100;
 
     if (maaned <= 0) { alert('Angiv venligst en bruttoløn.'); return; }
 
     // Pension (grundlag = bruttoløn)
     const pensionBase      = maaned;
-    const empPension1Month = pensionBase * rate1;
-    const empPension2Month = pensionBase * rate2;
-    const empPensionTotal  = empPension1Month + empPension2Month;
-    const empxPensionMonth = pensionBase * TAX.empxPensionRate;
+    const empPensionTotal  = pensionBase * rateEmp;
+    const empxPensionMonth = pensionBase * rateX;
 
     // Store Bededag (auto, 0,45 % af løn)
     const stBededag = maaned * TAX.stBededagRate;
@@ -383,10 +380,8 @@
     let html = '';
     html += line('1000', 'Månedsløn',                         '',           '',             '',                          maaned,            'beloeb-pos');
     html += line('3050', 'Fri telefon',                       TAX.friTelefon, '',           '',                          '',                '');
-    html += line('6200', TAX.pensionSelskab,                  empxPensionMonth, pensionBase, TAX.empxPensionRate * 100,  '',                '');
-    html += line('6201', `${TAX.pensionSelskab} eget bidrag %`, '',         pensionBase,    rate1 * 100,                 empPension1Month,  'beloeb-neg');
-    if (rate2 > 0)
-      html += line('6205', 'Pension egen %',                  '',           pensionBase,    rate2 * 100,                 empPension2Month,  'beloeb-neg');
+    html += line('6200',     TAX.pensionSelskab,              empxPensionMonth, pensionBase, rateX * 100,   '',              '');
+    html += line('6201/6205', 'Medarbejderbidrag pension',    '',              pensionBase, rateEmp * 100, empPensionTotal, 'beloeb-neg');
     html += line('7500', 'St. Bededagskomp.',                 stBededag,    amGrundlag,     TAX.stBededagRate * 100,     '',                '');
     html += line('7523', 'St. Bededagskomp. Udbt. løb.',      '',           '',             '',                          stBededag,         'beloeb-pos');
     html += line('8100', 'ATP A-sats',                        '',           TAX.normtid,    '',                          TAX.atpEmployee,   'beloeb-neg');
