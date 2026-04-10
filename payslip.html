@@ -9,193 +9,193 @@
 
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: #0f1117;
-    color: #e2e8f0;
+    background: #e8e8e8;
+    color: #1a1a1a;
     min-height: 100vh;
     padding: 40px 20px;
   }
 
   h1 {
     text-align: center;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: 8px;
-    color: #f8fafc;
+    margin-bottom: 6px;
+    color: #1a1a1a;
   }
 
   .subtitle {
     text-align: center;
-    color: #94a3b8;
-    font-size: 0.9rem;
-    margin-bottom: 40px;
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 32px;
   }
 
   .container {
-    max-width: 900px;
+    max-width: 860px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
   }
 
+  /* ── Input cards ── */
   .card {
-    background: rgba(30, 32, 44, 0.92);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 28px;
+    background: #fff;
+    border: 1px solid #d0d0d0;
+    border-radius: 8px;
+    padding: 20px 24px;
   }
 
   .card h2 {
-    font-size: 0.85rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    color: #94a3b8;
+    color: #888;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 20px;
+    letter-spacing: 0.09em;
+    margin-bottom: 14px;
   }
 
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-  @media (max-width: 600px) {
-    .grid-3 { grid-template-columns: 1fr; }
+  @media (max-width: 520px) {
+    .grid-2 { grid-template-columns: 1fr; }
   }
 
   .field { margin-bottom: 0; }
 
   label {
     display: block;
-    font-size: 0.82rem;
-    color: #94a3b8;
-    margin-bottom: 5px;
+    font-size: 0.78rem;
+    color: #555;
+    margin-bottom: 4px;
   }
 
   input[type="number"] {
     width: 100%;
-    background: rgba(15,17,23,0.8);
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 8px;
-    color: #f1f5f9;
-    font-size: 0.95rem;
-    padding: 9px 12px;
+    background: #fafafa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    color: #1a1a1a;
+    font-size: 0.9rem;
+    padding: 7px 10px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s;
   }
 
-  input:focus { border-color: #6366f1; }
-  input::placeholder { color: #475569; }
+  input:focus { border-color: #555; background: #fff; }
+  input::placeholder { color: #aaa; }
 
   button {
-    background: #6366f1;
+    background: #1a1a1a;
     color: #fff;
     border: none;
-    border-radius: 10px;
-    padding: 13px 32px;
-    font-size: 1rem;
+    border-radius: 6px;
+    padding: 12px 32px;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.15s;
     width: 100%;
+    letter-spacing: 0.02em;
   }
 
-  button:hover { background: #4f46e5; }
+  button:hover { background: #333; }
 
   /* ── Payslip output ── */
   .result-card {
-    background: rgba(30, 32, 44, 0.92);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 32px;
+    background: #fff;
+    border: 1px solid #b0b0b0;
+    border-radius: 4px;
+    padding: 28px 32px;
     display: none;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.82rem;
+    color: #000;
   }
 
   .result-card.visible { display: block; }
 
+  /* Period header */
   .slip-period {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #f1f5f9;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
   }
 
+  /* Main line-items table */
   .slip-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.88rem;
-    margin-bottom: 24px;
+    margin-bottom: 0;
+  }
+
+  .slip-table thead tr {
+    border-bottom: 1px solid #000;
   }
 
   .slip-table thead th {
-    color: #475569;
-    font-weight: 500;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 4px 8px 10px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: normal;
+    font-size: 0.82rem;
+    padding: 2px 6px 5px;
     text-align: right;
+    white-space: nowrap;
   }
 
-  .slip-table thead th:first-child { text-align: left; }
+  .slip-table thead th:first-child { text-align: left; padding-left: 0; }
+  .slip-table thead th:last-child  { padding-right: 0; }
 
-  .slip-table tbody tr {
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-
-  .slip-table tbody tr:last-child { border-bottom: none; }
+  .slip-table tbody tr { border: none; }
 
   .slip-table td {
-    padding: 7px 8px;
+    padding: 2px 6px;
     text-align: right;
-    color: #94a3b8;
     white-space: nowrap;
+    vertical-align: top;
   }
 
   .slip-table td.spec {
     text-align: left;
-    color: #cbd5e1;
+    padding-left: 0;
     white-space: normal;
+    min-width: 220px;
   }
 
   .slip-table td.spec .kode {
-    color: #475569;
-    font-size: 0.8rem;
-    margin-right: 8px;
+    display: inline-block;
+    width: 3.8em;
+    color: #000;
   }
 
-  .slip-table td.beloeb-pos { color: #34d399; }
-  .slip-table td.beloeb-neg { color: #f87171; }
-  .slip-table td.beloeb-neu { color: #e2e8f0; }
+  .slip-table td:last-child { padding-right: 0; }
 
+  /* Separator after last line item */
+  .slip-table tbody tr.sep-after td {
+    border-bottom: 1px solid #000;
+    padding-bottom: 6px;
+  }
+
+  /* Transfer section — simple monospace lines */
   .transfer-section {
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 16px;
-    margin-bottom: 24px;
+    padding-top: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.82rem;
   }
 
   .transfer-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    font-size: 0.9rem;
+    padding: 2px 0;
   }
-
-  .transfer-row .t-label { color: #94a3b8; }
-  .transfer-row .t-amount { color: #e2e8f0; font-variant-numeric: tabular-nums; }
 
   .transfer-row.net-pay {
-    background: rgba(99, 102, 241, 0.12);
-    border: 1px solid rgba(99, 102, 241, 0.3);
-    border-radius: 10px;
-    padding: 12px 16px;
-    margin-top: 8px;
+    border-top: 1px solid #000;
+    border-bottom: 2px solid #000;
+    margin-top: 4px;
+    padding: 4px 0;
+    font-weight: bold;
   }
-
-  .transfer-row.net-pay .t-label { color: #f1f5f9; font-weight: 600; font-size: 0.95rem; }
-  .transfer-row.net-pay .t-amount { color: #34d399; font-weight: 700; font-size: 1.1rem; }
-
 </style>
 </head>
 <body>
@@ -249,7 +249,9 @@
 
   <button onclick="calculate()">Beregn lønseddel</button>
 
+  <!-- ── Payslip output ── -->
   <div class="result-card" id="resultCard">
+
     <div class="slip-period" id="slipPeriod"></div>
 
     <table class="slip-table">
@@ -272,15 +274,14 @@
 </div>
 
 <script>
-  // 2026 Danish tax parameters
   const TAX = {
-    amBidrag:     0.08,
-    atpEmployee:  99,      // 37-timer fuld sats
-    atpFirm:      198,
+    amBidrag:      0.08,
+    atpEmployee:   99,
+    atpFirm:       198,
     stBededagRate: 0.0045,
-    friTelefon:   291.67,
+    friTelefon:    291.67,
     pensionSelskab: 'Danica',
-    normtid:      160.33,
+    normtid:       160.33,
   };
 
   function fmt(v) {
@@ -293,87 +294,75 @@
     return v.toLocaleString('da-DK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  function line(kode, spec, grundlag, enheder, sats, beloeb, beloebClass) {
+  // negative amounts shown as "1.234,56-" (suffix), matching real payslip format
+  function line(kode, spec, grundlag, enheder, sats, beloeb, isNeg, extraClass) {
     const gTd = grundlag !== '' ? `<td>${fmt(grundlag)}</td>`  : '<td></td>';
     const eTd = enheder  !== '' ? `<td>${fmt(enheder)}</td>`   : '<td></td>';
     const sTd = sats     !== '' ? `<td>${fmtSats(sats)}</td>`  : '<td></td>';
     let bTd = '<td></td>';
     if (beloeb !== '') {
-      const cls  = beloebClass || 'beloeb-neu';
-      const sign = beloebClass === 'beloeb-neg' ? '−' : '';
-      bTd = `<td class="${cls}">${sign}${fmt(beloeb)}</td>`;
+      const val = isNeg ? `${fmt(beloeb)}-` : fmt(beloeb);
+      bTd = `<td>${val}</td>`;
     }
-    return `<tr>
+    const cls = extraClass ? ` class="${extraClass}"` : '';
+    return `<tr${cls}>
       <td class="spec"><span class="kode">${kode}</span>${spec}</td>
       ${gTd}${eTd}${sTd}${bTd}
     </tr>`;
   }
 
-
   function calculate() {
-    const maaned        = parseFloat(document.getElementById('maanedsloenn').value)   || 0;
-    const erh           = parseFloat(document.getElementById('erhvervskort').value)   || 0;
-    const rateX         = (parseFloat(document.getElementById('empxPension').value)   || 0) / 100;
-    const rateEmp       = (parseFloat(document.getElementById('empPension').value)    || 0) / 100;
-    const traekpct      = parseFloat(document.getElementById('traekpct').value)       || 0;
-    const maanedsfradrag = parseFloat(document.getElementById('maanedsfradrag').value) || 0;
+    const maaned         = parseFloat(document.getElementById('maanedsloenn').value)    || 0;
+    const erh            = parseFloat(document.getElementById('erhvervskort').value)    || 0;
+    const rateX          = (parseFloat(document.getElementById('empxPension').value)    || 0) / 100;
+    const rateEmp        = (parseFloat(document.getElementById('empPension').value)     || 0) / 100;
+    const traekpct       = parseFloat(document.getElementById('traekpct').value)        || 0;
+    const maanedsfradrag = parseFloat(document.getElementById('maanedsfradrag').value)  || 0;
 
     if (maaned <= 0) { alert('Angiv venligst en månedsløn.'); return; }
 
-    // Pension base = løn − erhvervskort
     const pensionBase      = maaned - erh;
     const empPensionTotal  = pensionBase * rateEmp;
     const empxPensionMonth = pensionBase * rateX;
 
-    // Store Bededag: base = pensionBase × (1 + arbejdsgiverbidrag)
     const stBededagBase = pensionBase * (1 + rateX);
     const stBededag     = stBededagBase * TAX.stBededagRate;
 
-    // AM-grundlag: løn − erhvervskort + fri telefon + bededag − empPension − ATP
     const amGrundlag = pensionBase + TAX.friTelefon + stBededag - empPensionTotal - TAX.atpEmployee;
     const amBidrag   = Math.round(amGrundlag * TAX.amBidrag);
+    const aIndkomst  = amGrundlag - amBidrag;
+    const aSkat      = Math.floor(Math.max(0, aIndkomst - maanedsfradrag) * traekpct / 100);
+    const net        = maaned - erh + stBededag - amBidrag - aSkat - TAX.atpEmployee - empPensionTotal;
 
-    // A-indkomst
-    const aIndkomst = amGrundlag - amBidrag;
-
-    // A-skat: trækprocent from skattekort, truncated to whole krone
-    const aSkat = Math.floor(Math.max(0, aIndkomst - maanedsfradrag) * traekpct / 100);
-
-    // Net pay
-    const net = maaned - erh + stBededag - amBidrag - aSkat - TAX.atpEmployee - empPensionTotal;
-
-    // Period header
     document.getElementById('slipPeriod').textContent = 'Lønseddel';
 
-    // Line items
     let html = '';
-    html += line('1000', 'Månedsløn',                         '',              '',              '',                          maaned,            'beloeb-pos');
+    html += line('1000', 'Månedsløn',                        '',              '',             '',                         maaned,           false);
     if (erh > 0)
-      html += line('1562', 'Erhvervskort',                    '',              '',              '',                          erh,               'beloeb-neg');
-    html += line('3050', 'Fri telefon',                       TAX.friTelefon,  '',              '',                          '',                '');
-    html += line('6200',      TAX.pensionSelskab,             empxPensionMonth, pensionBase,    rateX * 100,                 '',                '');
-    html += line('6201/6205', 'Medarbejderbidrag pension',    '',              pensionBase,     rateEmp * 100,               empPensionTotal,   'beloeb-neg');
-    html += line('7500', 'St. Bededagskomp.',                 stBededag,       stBededagBase,   TAX.stBededagRate * 100,     '',                '');
-    html += line('7523', 'St. Bededagskomp. Udbt. løb.',      '',              '',              '',                          stBededag,         'beloeb-pos');
-    html += line('8100', 'ATP A-sats',                        '',              TAX.normtid,     '',                          TAX.atpEmployee,   'beloeb-neg');
-    html += line('8170', 'ATP firmabidrag',                   TAX.atpFirm,     '',              '',                          '',                '');
-    html += line('8220', 'AM-bidrag af løn',                  '',              amGrundlag,      TAX.amBidrag * 100,          amBidrag,          'beloeb-neg');
-    html += line('8250', 'A-skat af løn',                     aIndkomst,       maanedsfradrag,  traekpct,                    aSkat,             'beloeb-neg');
+      html += line('1562', 'Erhvervskort',                   '',              '',             '',                         erh,              true);
+    html += line('3050', 'Fri telefon',                      TAX.friTelefon,  '',             '',                         '',               false);
+    html += line('6200',      TAX.pensionSelskab,            empxPensionMonth, pensionBase,   rateX * 100,                '',               false);
+    html += line('6201/6205', 'Medarbejderbidrag pension',   '',              pensionBase,    rateEmp * 100,              empPensionTotal,   true);
+    html += line('7500', 'St. Bededagskomp.',                stBededag,       stBededagBase,  TAX.stBededagRate * 100,    '',               false);
+    html += line('7523', 'St. Bededagskomp. Udbt. løb.',     '',              '',             '',                         stBededag,        false);
+    html += line('8100', 'ATP A-sats',                       '',              TAX.normtid,    '',                         TAX.atpEmployee,  true);
+    html += line('8170', 'ATP firmabidrag',                  TAX.atpFirm,     '',             '',                         '',               false);
+    html += line('8220', 'AM-bidrag af løn',                 '',              amGrundlag,     TAX.amBidrag * 100,         amBidrag,         true);
+    html += line('8250', 'A-skat af løn',                    aIndkomst,       maanedsfradrag, traekpct,                   aSkat,            true, 'sep-after');
 
     document.getElementById('slipLines').innerHTML = html;
 
-    // Transfer section
     const pensionTotal = empxPensionMonth + empPensionTotal;
     let tHtml = '';
     if (pensionTotal > 0) {
       tHtml += `<div class="transfer-row">
-        <span class="t-label">Overført til ${TAX.pensionSelskab}</span>
-        <span class="t-amount">${fmt(pensionTotal)}</span>
+        <span>Overført til ${TAX.pensionSelskab}</span>
+        <span>${fmt(pensionTotal)}</span>
       </div>`;
     }
     tHtml += `<div class="transfer-row net-pay">
-      <span class="t-label">Udbetalt til konto</span>
-      <span class="t-amount">${fmt(net)}</span>
+      <span>Udbetalt til konto</span>
+      <span>${fmt(net)}</span>
     </div>`;
     document.getElementById('transferSection').innerHTML = tHtml;
 
